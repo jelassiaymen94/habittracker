@@ -4,10 +4,6 @@
 
 Built with **Spring Boot**, **Thymeleaf**, **JPA**, and **H2** as my first end-to-end Java web project — focused on real architecture, real algorithms, and a polished UI.
 
-<!-- Replace these once you take screenshots -->
-![Habit list page](docs/screenshot-list.png)
-![Habit detail with calendar](docs/screenshot-detail.png)
-
 ---
 
 ## ✨ Features
