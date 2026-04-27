@@ -38,7 +38,7 @@ Built with **Spring Boot**, **Thymeleaf**, **JPA**, and **H2** as my first end-t
 **Requirements:** JDK 17+
 
 ```bash
-git clone https://github.com/<your-username>/habittracker.git
+git clone https://github.com/jelassiaymen94/habittracker.git
 cd habittracker
 ./mvnw spring-boot:run        # Linux/macOS
 mvnw.cmd spring-boot:run      # Windows
