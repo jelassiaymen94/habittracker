@@ -1,0 +1,3 @@
+2026-04-26 12:59:21.210608+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]CREATED_AT HABIT"; expected "COMMIT, CREATE, CALL, CHECKPOINT, COMMENT"; SQL statement:
+CREATED_AT HABIT [42001-232]
