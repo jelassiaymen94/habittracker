@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -69,11 +70,11 @@ public class HabitController {
 
         model.addAttribute("habit", habit);
         model.addAttribute("currentStreak", habitService.currentStreak(habit));
-        model.addAttribute(("longestStreak"), habitService.longestStreak(habit));
+        model.addAttribute("longestStreak", habitService.longestStreak(habit));
         model.addAttribute("totalCompletions", habitService.totalCompletions(habit));
-        model.addAttribute(("doneToday"), habitService.isDoneToday(habit));
+        model.addAttribute("doneToday", habitService.isDoneToday(habit));
         model.addAttribute("days", habitService.last90Days(habit));
-        model.addAttribute("today", java.time.LocalDate.now());
+        model.addAttribute("today", LocalDate.now());
         return "habits/show";
     }
 
