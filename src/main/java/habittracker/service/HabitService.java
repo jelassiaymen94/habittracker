@@ -1,8 +1,13 @@
 package habittracker.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +18,8 @@ import habittracker.repository.HabitRepository;
 
 @Service
 public class HabitService {
+
+    private static final Logger log = LoggerFactory.getLogger(HabitService.class);
 
     private final HabitRepository habitRepository;
     private final HabitCompletionRepository completionRepository;
@@ -26,33 +33,26 @@ public class HabitService {
      * Mark a habit as done for TODAY.
      * If it's already marked done today, do nothing (idempotent).
      */
-
     @Transactional
     public void markDoneToday(Long habitId) {
-        System.out.println(">>> markDoneToday called for habit id = " + habitId);
-
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new IllegalArgumentException("Habit not found: " + habitId));
-        System.out.println(">>> Found habit: " + habit.getName());
 
         LocalDate today = LocalDate.now();
-        System.out.println(">>> Today (Java side) = " + today);
-
         boolean alreadyDone = completionRepository
                 .findByHabitAndDate(habit, today)
                 .isPresent();
-        System.out.println(">>> alreadyDone = " + alreadyDone);
 
         if (alreadyDone) {
-            System.out.println(">>> SKIPPING (already done)");
+            log.debug("Habit {} already completed on {}, skipping", habitId, today);
             return;
         }
 
         HabitCompletion completion = new HabitCompletion();
         completion.setHabit(habit);
         completion.setDate(today);
-        HabitCompletion saved = completionRepository.save(completion);
-        System.out.println(">>> SAVED completion id = " + saved.getId());
+        completionRepository.save(completion);
+        log.debug("Recorded completion for habit {} on {}", habitId, today);
     }
 
     public boolean isDoneToday(Habit habit) {
@@ -60,10 +60,10 @@ public class HabitService {
     }
 
     /**
-     * Total number of days this habit has been completed
+     * Total number of days this habit has been completed.
      */
     public long totalCompletions(Habit habit) {
-        return completionRepository.findByHabitOrderByDateDesc(habit).size();
+        return completionRepository.countByHabit(habit);
     }
 
     public int currentStreak(Habit habit) {
@@ -131,16 +131,16 @@ public class HabitService {
      * Returns the last 90 days as a list of (date, completed?) pairs,
      * oldest first -> easy to render as a grid.
      */
-    public List<DayCell> last90Days(Habit habit){
+    public List<DayCell> last90Days(Habit habit) {
         LocalDate today = LocalDate.now();
         LocalDate start = today.minusDays(89);
 
         Set<LocalDate> done = completionRepository
                 .findByHabitAndDateBetween(habit, start, today).stream()
                 .map(HabitCompletion::getDate)
-                .collect(java.util.stream.Collectors.toSet());
+                .collect(Collectors.toSet());
 
-        List<DayCell> cells = new java.util.ArrayList<>();
+        List<DayCell> cells = new ArrayList<>();
         for (LocalDate d = start; !d.isAfter(today); d = d.plusDays(1)) {
             cells.add(new DayCell(d, done.contains(d)));
         }

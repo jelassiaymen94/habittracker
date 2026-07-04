@@ -16,4 +16,7 @@ public interface HabitCompletionRepository extends JpaRepository<HabitCompletion
     List<HabitCompletion> findByHabitOrderByDateDesc(Habit habit);
 
     List<HabitCompletion> findByHabitAndDateBetween(Habit habit, LocalDate start, LocalDate end);
+
+    // Count all completions for a habit without loading the rows into memory
+    long countByHabit(Habit habit);
 }
